@@ -10,6 +10,25 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="login.css" />
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
+    <script>
+      
+      const firebaseConfig = {
+        apiKey: "AIzaSyCmiBcZ3VCgEAtDMgyg0vDFhNyi7H2xcpk",
+        authDomain: "seasonal-lens.firebaseapp.com",
+        databaseURL: "https://seasonal-lens-default-rtdb.firebaseio.com",
+        projectId: "seasonal-lens",
+        storageBucket: "seasonal-lens.appspot.com",
+        messagingSenderId: "961849470376",
+        appId: "1:961849470376:web:cfa47d3a40d59a1116c19d"
+      };
+      firebase.initializeApp(firebaseConfig);
+
+    </script>
   </head>
 
   <body>
@@ -19,13 +38,14 @@
 
         <form action="login.html" method="post">
           Email
-          <input type="email" name="e" value="" class="form-control" /><br />
+          <input type="email" name="e"  value="" class="form-control" /><br />
           Password
-          <input type="password" name="p" value="" class="form-control" /><br />
+          <input type="password" name="p"  value="" class="form-control" /><br />
           <div class="button">
             <input
               type="submit"
               name="login"
+              id="login"
               value="Login"
               class="btn btn-light"
             />
@@ -38,4 +58,30 @@
       </div>
     </div>
   </body>
+  <script>
+    const email = document.getElementsByName("e")[0];
+      const password = document.getElementsByName("p")[0];
+      const login = document.getElementById("login");
+
+      login.addEventListener("click", async function(event) {
+            event.preventDefault(); // デフォルトのフォーム送信動作をキャンセルする
+
+            let mailv = email.value;
+            let passv = password.value;
+
+            try {
+                const userCredential = await firebase.auth().signInWithEmailAndPassword(mailv, passv);
+                // ログインが成功した場合の処理
+                console.log("User logged in successfully!");
+                // ページを移動する例: ログイン後のページにリダイレクトする
+                window.location.href = "home.html";
+            } catch (error) {
+                // エラーが発生した場合の処理
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.error("Login error:", errorMessage);
+            }
+        });
+    
+  </script>
 </html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <title>UserRegister</title>
+    </head>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script>
+        const firebaseConfig = {
+        apiKey: "AIzaSyCmiBcZ3VCgEAtDMgyg0vDFhNyi7H2xcpk",
+        authDomain: "seasonal-lens.firebaseapp.com",
+        databaseURL: "https://seasonal-lens-default-rtdb.firebaseio.com",
+        projectId: "seasonal-lens",
+        storageBucket: "seasonal-lens.appspot.com",
+        messagingSenderId: "961849470376",
+        appId: "1:961849470376:web:cfa47d3a40d59a1116c19d"
+      };
+      firebase.initializeApp(firebaseConfig);
+
+    </script>
+    <body>
+        <form action="login.html" method="post">
+            Email
+            <input type="email" name="e"  value="" class="form-control" /><br />
+            Password
+            <input type="password" name="p"  value="" class="form-control" /><br />
+            Confirm password
+            <input type="password" name="cp"  value="" class="form-control" /><br />
+            <div class="button">
+              <input
+                type="submit"
+                name="register"
+                id="register"
+                value="register"
+                class="btn btn-light"
+              />
+            <p id="message"></p>
+            </div>
+          </form>
+    </body>
+    <script>
+        const email = document.getElementsByName("e")[0];
+        const password = document.getElementsByName("p")[0];
+        const confirmedPass = document.getElementsByName("cp")[0];
+        const register = document.getElementById("register");
+
+        const message = document.getElementById("message");
+
+        register.addEventListener("click", async function(event) {
+            event.preventDefault(); // デフォルトのフォーム送信動作をキャンセルする
+
+            let mailv = email.value;
+            let passv = password.value;
+            let pass2v = confirmedPass.value;
+            
+            if (passv === pass2v) {
+                try {
+                    const userCredential = await firebase.auth().createUserWithEmailAndPassword(mailv, passv);
+                    // サインアップが成功した場合の処理
+                    console.log("User signed up successfully!");
+                    message.innerHTML = "User signed up successfully!";
+                    // ページを移動する例: サインアップ後のページにリダイレクトする
+                    //window.location.href = "*.html";
+                } catch (error) {
+                    // エラーが発生した場合の処理
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    console.error("Sign up error:", errorMessage);
+                }
+            } else {
+                // パスワードが一致しない場合の処理
+                console.error("Passwords do not match!");
+                message.innerHTML = "Passwords do not match!";
+            }
+        });
+
+    </script>
+</html>
