@@ -3,9 +3,17 @@
     <head>
         <meta charset="utf-8" />
         <title>UserRegister</title>
+        <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="login.css" />
     </head>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
     <script>
         const firebaseConfig = {
@@ -21,32 +29,44 @@
 
     </script>
     <body>
-        <form action="login.html" method="post">
-            Email
-            <input type="email" name="e"  value="" class="form-control" /><br />
-            Password
-            <input type="password" name="p"  value="" class="form-control" /><br />
-            Confirm password
-            <input type="password" name="cp"  value="" class="form-control" /><br />
-            <div class="button">
-              <input
-                type="submit"
-                name="register"
-                id="register"
-                value="register"
-                class="btn btn-light"
-              />
-            <p id="message"></p>
+        <div class="container">
+            <div class="mx-auto" style="width: 400px">
+
+                <h1>Register</h1>
+
+                <form action="login.html" method="post">
+                    Email
+                    <input type="email" name="e"  value="" class="form-control" /><br />
+                    Password
+                    <input type="password" name="p"  value="" class="form-control" /><br />
+                    Confirm password
+                    <input type="password" name="cp"  value="" class="form-control" /><br />
+                    <div class="button">
+                    <input
+                        type="submit"
+                        name="register"
+                        id="register"
+                        value="register"
+                        class="btn btn-light"
+                    />
+                    <p id="message"></p>
+                    </div>
+                </form>
             </div>
-          </form>
+        </div>
     </body>
     <script>
+        // Firestoreの参照を取得
+        const db = firebase.firestore();
+
         const email = document.getElementsByName("e")[0];
         const password = document.getElementsByName("p")[0];
         const confirmedPass = document.getElementsByName("cp")[0];
         const register = document.getElementById("register");
 
-        const message = document.getElementById("message");
+        const message = document.getElementById("message"); 
+
+        const currentData = new Date();
 
         register.addEventListener("click", async function(event) {
             event.preventDefault(); // デフォルトのフォーム送信動作をキャンセルする
@@ -60,7 +80,35 @@
                     const userCredential = await firebase.auth().createUserWithEmailAndPassword(mailv, passv);
                     // サインアップが成功した場合の処理
                     console.log("User signed up successfully!");
+                    const uid = userCredential.user.uid;
+                    console.log(uid);
                     message.innerHTML = "User signed up successfully!";
+
+                    //usersコレクションに追加
+                    db.collection("users").doc(uid).set({
+                       registerData:currentData
+                    })
+                    .then(function() {
+                        console.log("Document successfully written!");
+                    })
+                    .catch(function(error) {
+                        console.error("Error writing document: ", error);
+                        alert("Failed to save profile.");
+                    });
+
+                    //PostDataコレクションにユーザ専用の投稿保存ドキュメントを用意
+                    db.collection("PostData").doc(uid).set({
+                       
+                    })
+                    .then(function() {
+                        console.log("Document successfully written!");
+                    })
+                    .catch(function(error) {
+                        console.error("Error writing document: ", error);
+                        alert("Failed to save profile.");
+                    });
+
+
                     // ページを移動する例: サインアップ後のページにリダイレクトする
                     //window.location.href = "*.html";
                 } catch (error) {

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emoji Selection</title>
+<style>
+    .emoji-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .emoji-container label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+    .emoji-container input[type="radio"] {
+        display: none;
+    }
+
+    .emoji-container .emoji {
+        font-size: 24px;
+        margin-right: 10px;
+    }
+
+    .emoji-container .emoji:checked + .emoji-label {
+        font-size: 32px;
+    }
+</style>
+</head>
+<body>
+
+<div class="emoji-container">
+    <label>
+        <input type="radio" name="emoji" value="😊" class="emoji">
+        <span class="emoji-label">😊</span>
+    </label>
+    <label>
+        <input type="radio" name="emoji" value="😄" class="emoji">
+        <span class="emoji-label">😄</span>
+    </label>
+    <label>
+        <input type="radio" name="emoji" value="😎" class="emoji">
+        <span class="emoji-label">😎</span>
+    </label>
+</div>
+
+</body>
+</html>
