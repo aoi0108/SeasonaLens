@@ -44,8 +44,12 @@
 
     <div class="container">
       <h1>Share</h1>
+      <label class="upload-label">
+        写真を選択
+        <input type="file" accept="image/*" required />
+      </label>
       <form id="postForm">
-        <input type="file" id="postPic" accept="image/*" required />
+        <!-- <input type="file" id="postPic" accept="image/*" required /> -->
 
         <input type="text" id="caption" placeholder="caption" />
 
@@ -101,7 +105,7 @@
           <label for="love" class="feel-label">🥰</label>
         </div>
       </form>
-      <button id="submit" type="submit">Post</button>
+      <button id="submit" type="submit">Share</button>
     </div>
   </body>
   <script>
