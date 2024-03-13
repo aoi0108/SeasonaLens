@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="share.css" />
-    <title>post</title>
+    <title>share</title>
 
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
@@ -12,17 +12,16 @@
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
 
     <script>
-        const firebaseConfig = {
+      const firebaseConfig = {
         apiKey: "AIzaSyCmiBcZ3VCgEAtDMgyg0vDFhNyi7H2xcpk",
         authDomain: "seasonal-lens.firebaseapp.com",
         databaseURL: "https://seasonal-lens-default-rtdb.firebaseio.com",
         projectId: "seasonal-lens",
         storageBucket: "seasonal-lens.appspot.com",
         messagingSenderId: "961849470376",
-        appId: "1:961849470376:web:cfa47d3a40d59a1116c19d"
+        appId: "1:961849470376:web:cfa47d3a40d59a1116c19d",
       };
       firebase.initializeApp(firebaseConfig);
-
     </script>
   </head>
   <body>
@@ -42,90 +41,132 @@
         </ul>
       </nav>
     </div>
-    
+
     <div class="container">
-      <h1>Post</h1>
+      <h1>Share</h1>
+      <label class="upload-label">
+        写真を選択
+        <input type="file" accept="image/*" required />
+      </label>
       <form id="postForm">
-      <input type="file" id="postPic" accept="image/*" required>
-    
-      <input type="text" id="caption" placeholder="caption">
+        <!-- <input type="file" id="postPic" accept="image/*" required /> -->
+
+        <input type="text" id="caption" placeholder="caption" />
 
         <div class="feelings-container">
-          <input type="radio" id="happy" value="happy" name="feelings" class="feel" required>
+          <input
+            type="radio"
+            id="happy"
+            value="happy"
+            name="feelings"
+            class="feel"
+            required
+          />
           <label for="happy" class="feel-label">😁</label>
-          <input type="radio" id="relax" value="relax" name="feelings" class="feel" >
+          <input
+            type="radio"
+            id="relax"
+            value="relax"
+            name="feelings"
+            class="feel"
+          />
           <label for="relax" class="feel-label">😌</label>
-          <input type="radio" id="mad" value="mad" name="feelings" class="feel">
+          <input
+            type="radio"
+            id="mad"
+            value="mad"
+            name="feelings"
+            class="feel"
+          />
           <label for="mad" class="feel-label">😡</label>
-          <input type="radio" id="crying" value="crying" name="feelings" class="feel">
+          <input
+            type="radio"
+            id="crying"
+            value="crying"
+            name="feelings"
+            class="feel"
+          />
           <label for="crying" class="feel-label">😭</label>
-          <input type="radio" id="surprised" value="surprised" name="feelings" class="feel">
+          <input
+            type="radio"
+            id="surprised"
+            value="surprised"
+            name="feelings"
+            class="feel"
+          />
           <label for="surprised" class="feel-label">🤯</label>
-          <input type="radio" id="love" value="love" name="feelings" class="feel">
+          <input
+            type="radio"
+            id="love"
+            value="love"
+            name="feelings"
+            class="feel"
+          />
           <label for="love" class="feel-label">🥰</label>
         </div>
       </form>
-    <button id="submit" type="submit">Post</button>
-  </div>
+      <button id="submit" type="submit">Share</button>
+    </div>
   </body>
   <script>
     const db = firebase.firestore();
     const form = document.getElementById("postForm");
     const button = document.getElementById("submit");
 
-    button.addEventListener('click',function(event){
+    button.addEventListener("click", function (event) {
       //event.preventDefault();
-      console.log('click');
-      
-      
+      console.log("click");
+
       const user = firebase.auth().currentUser;
-    if (user) {
-       // デフォルトのフォーム送信動作をキャンセル
+      if (user) {
+        // デフォルトのフォーム送信動作をキャンセル
 
-      const picture = document.getElementById("postPic").files[0];
-      const caption = document.getElementById("caption").value;
-      const feelformData = new FormData(form);
-      const feelData = feelformData.get("feelings");
+        const picture = document.getElementById("postPic").files[0];
+        const caption = document.getElementById("caption").value;
+        const feelformData = new FormData(form);
+        const feelData = feelformData.get("feelings");
 
-         // 画像をFirebase Storageにアップロードし、URLを取得
-      const storageRef = firebase.storage().ref();
+        // 画像をFirebase Storageにアップロードし、URLを取得
+        const storageRef = firebase.storage().ref();
 
-      const postPictRef = storageRef.child('postPictures/' + 'testid' + '/' + picture.name);
-      postPictRef.put(picture).then(function(snapshot) {
-        // アップロードした画像のURLを取得
-        postPictRef.getDownloadURL().then(function(url) {
-                // FirestoreにユーザーIDと共にデータを保存
-                //user.uid
-                db.collection("PostData").doc('testid').collection("post").add({
-                    Picture: url,
-                    caption: caption,
-                    feeling:feelData
+        const postPictRef = storageRef.child(
+          "postPictures/" + "testid" + "/" + picture.name
+        );
+        postPictRef
+          .put(picture)
+          .then(function (snapshot) {
+            // アップロードした画像のURLを取得
+            postPictRef.getDownloadURL().then(function (url) {
+              // FirestoreにユーザーIDと共にデータを保存
+              //user.uid
+              db.collection("PostData")
+                .doc("testid")
+                .collection("post")
+                .add({
+                  Picture: url,
+                  caption: caption,
+                  feeling: feelData,
                 })
-                .then(function() {
-                    console.log("Document successfully written!");
-                    alert("post success!");
-                    //Form.reset();
-                    //window.location.href = "home.html";
+                .then(function () {
+                  console.log("Document successfully written!");
+                  alert("post success!");
+                  //Form.reset();
+                  //window.location.href = "home.html";
                 })
-                .catch(function(error) {
-                    console.error("Error writing document: ", error);
-                    alert("Failed to save post.");
+                .catch(function (error) {
+                  console.error("Error writing document: ", error);
+                  alert("Failed to save post.");
                 });
             });
-        }).catch(function(error) {
+          })
+          .catch(function (error) {
             console.error("Error uploading file: ", error);
             alert("Failed to upload picture.");
-        });
-
-        
-      }else{
+          });
+      } else {
         console.log("User is not signed in.");
         alert("投稿にはログインが必要です");
       }
-      
-      
-      
     });
-    
   </script>
 </html>
