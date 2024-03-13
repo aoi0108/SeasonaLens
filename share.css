@@ -85,6 +85,13 @@ h1{
     left: 0;/* メニューを画面に入れる */
 }
 
+form{
+  display: flex;
+  flex-flow: column;
+  margin:10px;
+  padding:10px;
+}
+
 /* アップロードボタン　*/
 .upload-label {
   height: 300px;
