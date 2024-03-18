@@ -46,7 +46,7 @@
       <h1>Share</h1>
       <label class="upload-label">
         写真を選択
-        <input type="file" accept="image/*" required />
+        <input type="file" id="postPic" accept="image/*" required />
       </label>
       <form id="postForm">
         <!-- <input type="file" id="postPic" accept="image/*" required /> -->
@@ -116,6 +116,8 @@
     button.addEventListener("click", function (event) {
       //event.preventDefault();
       console.log("click");
+      let today = new Date();
+      const postDate = today.getFullYear() + "/" + (today.getMonth()+1) + "/" + today.getDate() + "  " + today.getHours() + ":" + today.getMinutes();
 
       const user = firebase.auth().currentUser;
       if (user) {
@@ -140,17 +142,18 @@
               // FirestoreにユーザーIDと共にデータを保存
               //user.uid
               db.collection("PostData")
-                .doc("testid")
+                .doc(user.uid)
                 .collection("post")
                 .add({
                   Picture: url,
                   caption: caption,
                   feeling: feelData,
+                  postDate: postDate
                 })
                 .then(function () {
                   console.log("Document successfully written!");
                   alert("post success!");
-                  //Form.reset();
+                  form.reset();
                   //window.location.href = "home.html";
                 })
                 .catch(function (error) {

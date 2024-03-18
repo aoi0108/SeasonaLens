@@ -28,8 +28,17 @@
     <!-- 本文 -->
     <div class="PicContainer">
       <botton type="button"><img src="images/arrow-left-circle.svg"  alt="previous post" ></botton>
-      <botton type="button"><img src="images/arrow-right-circle.svg"></botton>
+      <botton type="button"><img src="images/arrow-right-circle.svg" onclick="test()"></botton>
+
 
     </div>
   </body>
+  <script>
+    function test(){
+      let today = new Date();
+      console.log(today);
+      const postDate = today.getFullYear() + "/" + (today.getMonth()+1) + "/" + today.getDate() + "  " + today.getHours() + ":" + today.getMinutes();
+      console.log(postDate);
+    }
+  </script>
 </html>
