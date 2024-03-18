@@ -92,11 +92,22 @@ body{
   display: flex;
   flex-direction: column;
   text-align: center;
+  margin: 20px;
   color: #555555; /* 文字の色を指定 */
+}
+
+#postDay{
+  color:#c88baa;
 }
 
 #feel{
   font-size:30px;
+  margin:5px;
+  margin-top: 20px;
+}
+
+#caption{
+  margin:5px;
 }
 
 .update-button button{

@@ -46,16 +46,18 @@
     </div>
     <!-- 本文 -->
     <div class="PostAndArrowContainer">
-      <botton type="button"><img src="images/arrow-left-circle.svg"  alt="previous post" ></botton>
+      <!--ひだり矢印（戻る）-->
+      <botton type="button" id="leftArrow"><img src="images/arrow-left-circle.svg"  alt="previous post" ></botton>
 
        <div class="postContainer">
+        <p id="postDay"></p>
         <img id="postPic" src="" style="height:300px;">
-        <h3 id="caption"></h3>
-        <h3 id="feel"></h3>
-        <h3 id="postDay"></h3>
+        <p id="feel"></p>
+        <p id="caption"></p>
 
-       </div>      
-       <botton type="button"><img src="images/arrow-right-circle.svg" onclick="test()"></botton>
+       </div>     
+       <!--みぎ矢印（進む）--> 
+       <botton type="button" id="rightArrow"><img src="images/arrow-right-circle.svg"></botton>
       </div>
       <!-- グラフ -->
       <canvas id="updateChart"></canvas>
@@ -66,15 +68,20 @@
     </div>
   </body>
   <script>
-  
+    //データベースの参照を用意
     const db = firebase.firestore();
-    //const user = firebase.auth().currentUser;
-
+    
+    //ユーザーの投稿データすべてを収容する配列
     let postDatas = [];
     let i = 0;
 
+    //ボタンを取得
+    const LButton = document.getElementById("leftArrow");
+    const RButton = document.getElementById("rightArrow");
+
     firebase.auth().onAuthStateChanged(user => {
       if(user){
+        //投稿データの取得
         db.collection("PostData").doc(user.uid).collection("post").get().then((snapShot) => {
           snapShot.forEach(doc => {
             postDatas[i] = doc.data();
@@ -82,24 +89,29 @@
           });
           console.log(postDatas);
           
-          document.getElementById("postPic").src = postDatas[0].Picture;
-          document.getElementById("caption").innerHTML = postDatas[0].caption;
+          //切り替え用の変数
+          let j = 0;
+          displayPost(j);
 
-          if(postDatas[0].feeling=="happy"){
-            document.getElementById("feel").innerHTML = "😁"
-          }else if(postDatas[0].feeling=="relax"){
-            document.getElementById("feel").innerHTML = "😌"
-          }else if(postDatas[0].feeling=="mad"){
-            document.getElementById("feel").innerHTML = "😡"
-          }else if(postDatas[0].feeling=="crying"){
-            document.getElementById("feel").innerHTML = "😭"
-          }else if(postDatas[0].feeling=="surprised"){
-            document.getElementById("feel").innerHTML = "🤯"
-          }else if(postDatas[0].feeling=="love"){
-            document.getElementById("feel").innerHTML = "🥰"
-          }
+          LButton.addEventListener('click',(event)=>{
+            if(j-1<0){
+              j=postDatas.length-1;
+            }else{
+              j--;
+            }
+            console.log("display:"+j);
+            displayPost(j);
+          })
 
-          document.getElementById("postDay").innerHTML = postDatas[0].postDate;
+          RButton.addEventListener('click',(event)=>{
+            if(j+1 > postDatas.length-1){
+              j=0;
+            }else{
+              j++;
+            }
+            console.log("display:"+j);
+            displayPost(j);
+          })
 
         });
         
@@ -107,6 +119,30 @@
           console.log("please login.")
       }
     });
+
+    //受け取った数字をインデックスとして、対応する投稿を表示する関数
+    function displayPost(i){
+      //投稿の表示-写真とキャプション
+      document.getElementById("postPic").src = postDatas[i].Picture;
+          document.getElementById("caption").innerHTML = postDatas[i].caption;
+
+          ////投稿の表示-絵文字
+          if(postDatas[i].feeling=="happy"){
+            document.getElementById("feel").innerHTML = "😁"
+          }else if(postDatas[i].feeling=="relax"){
+            document.getElementById("feel").innerHTML = "😌"
+          }else if(postDatas[i].feeling=="mad"){
+            document.getElementById("feel").innerHTML = "😡"
+          }else if(postDatas[i].feeling=="crying"){
+            document.getElementById("feel").innerHTML = "😭"
+          }else if(postDatas[i].feeling=="surprised"){
+            document.getElementById("feel").innerHTML = "🤯"
+          }else if(postDatas[i].feeling=="love"){
+            document.getElementById("feel").innerHTML = "🥰"
+          }
+          //投稿の表示-投稿日
+          document.getElementById("postDay").innerHTML = postDatas[i].postDate;
+    }
 
     let myUpdateChart; // グローバルスコープで変数を宣言
       // キャンバスの要素を取得
