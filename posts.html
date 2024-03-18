@@ -5,7 +5,24 @@
     <link rel="stylesheet" href="posts.css" />
     <link rel="stylesheet" href="https://unpkg.com/@vectopus/atlas-icons/style.css">
     <title>Share</title>
-    <script></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
+    <script>
+       const firebaseConfig = {
+        apiKey: "AIzaSyCmiBcZ3VCgEAtDMgyg0vDFhNyi7H2xcpk",
+        authDomain: "seasonal-lens.firebaseapp.com",
+        databaseURL: "https://seasonal-lens-default-rtdb.firebaseio.com",
+        projectId: "seasonal-lens",
+        storageBucket: "seasonal-lens.appspot.com",
+        messagingSenderId: "961849470376",
+        appId: "1:961849470376:web:cfa47d3a40d59a1116c19d",
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
   </head>
   <body>
     <!-- ハンバーガーメニュー部分 -->
@@ -26,19 +43,62 @@
     </div>
 
     <!-- 本文 -->
-    <div class="PicContainer">
+    <div class="PostAndArrowContainer">
       <botton type="button"><img src="images/arrow-left-circle.svg"  alt="previous post" ></botton>
-      <botton type="button"><img src="images/arrow-right-circle.svg" onclick="test()"></botton>
+
+       <div class="postContainer">
+        <img id="postPic" src="" style="height:300px;">
+        <h3 id="caption"></h3>
+        <h3 id="feel"></h3>
+        <h3 id="postDay"></h3>
+
+       </div>      
+       <botton type="button"><img src="images/arrow-right-circle.svg" onclick="test()"></botton>
 
 
     </div>
   </body>
   <script>
-    function test(){
-      let today = new Date();
-      console.log(today);
-      const postDate = today.getFullYear() + "/" + (today.getMonth()+1) + "/" + today.getDate() + "  " + today.getHours() + ":" + today.getMinutes();
-      console.log(postDate);
-    }
+    const db = firebase.firestore();
+    //const user = firebase.auth().currentUser;
+
+    let postDatas = [];
+    let i = 0;
+
+    firebase.auth().onAuthStateChanged(user => {
+      if(user){
+        db.collection("PostData").doc(user.uid).collection("post").get().then((snapShot) => {
+          snapShot.forEach(doc => {
+            postDatas[i] = doc.data();
+            i++;
+          });
+          console.log(postDatas);
+          
+          document.getElementById("postPic").src = postDatas[0].Picture;
+          document.getElementById("caption").innerHTML = postDatas[0].caption;
+
+          if(postDatas[0].feeling=="happy"){
+            document.getElementById("feel").innerHTML = "😁"
+          }else if(postDatas[0].feeling=="relax"){
+            document.getElementById("feel").innerHTML = "😌"
+          }else if(postDatas[0].feeling=="mad"){
+            document.getElementById("feel").innerHTML = "😡"
+          }else if(postDatas[0].feeling=="crying"){
+            document.getElementById("feel").innerHTML = "😭"
+          }else if(postDatas[0].feeling=="surprised"){
+            document.getElementById("feel").innerHTML = "🤯"
+          }else if(postDatas[0].feeling=="love"){
+            document.getElementById("feel").innerHTML = "🥰"
+          }
+
+          document.getElementById("postDay").innerHTML = postDatas[0].postDate;
+
+        });
+        
+        }else{
+          console.log("please login.")
+      }
+    });
+
   </script>
 </html>
