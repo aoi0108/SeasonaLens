@@ -61,9 +61,9 @@
       </div>
       <!-- グラフ -->
       <canvas id="updateChart"></canvas>
-      <div class="update-button">
+      <!-- <div class="update-button">
         <button id="updateButton">データ更新</button>
-      </div>
+      </div> -->
 
     </div>
   </body>
@@ -122,12 +122,11 @@
 
     //受け取った数字をインデックスとして、対応する投稿を表示する関数
     function displayPost(i){
-  
       //投稿の表示-写真とキャプション
       document.getElementById("postPic").src = postDatas[i].Picture;
-      document.getElementById("caption").innerHTML = postDatas[i].caption;
+          document.getElementById("caption").innerHTML = postDatas[i].caption;
 
-          //投稿の表示-絵文字
+          ////投稿の表示-絵文字
           if(postDatas[i].feeling=="happy"){
             document.getElementById("feel").innerHTML = "😁"
           }else if(postDatas[i].feeling=="relax"){
@@ -141,7 +140,6 @@
           }else if(postDatas[i].feeling=="love"){
             document.getElementById("feel").innerHTML = "🥰"
           }
-
           //投稿の表示-投稿日
           document.getElementById("postDay").innerHTML = postDatas[i].postDate;
     }
@@ -149,7 +147,7 @@
     let myUpdateChart; // グローバルスコープで変数を宣言
       // キャンバスの要素を取得
       const ctx = document.getElementById("updateChart").getContext("2d");
-      const updateButton = document.getElementById("updateButton");
+      // const updateButton = document.getElementById("updateButton");
       // グラフデータ取得関数
       function getGraphData() {
         const user = firebase.auth().currentUser;
@@ -168,7 +166,7 @@
             snapshot.forEach((doc) => {
               const docData = doc.data();
               // データから感情の数値を取得して配列に追加
-              data.push(docData.feelData);
+              data.push(docData.feeling);
               labels.push(docData.postDate);
             });
             console.log("Data:", data); // データをコンソールに出力
@@ -192,7 +190,7 @@
           type: "line",
           data: {
             // データの設定
-            labels: Array.from({ length: data.length }, (_, i) => i + 1), // ラベルは投稿の順番
+            labels: labels,
             datasets: [
               {
                 label: "Feelings Transition",
@@ -200,7 +198,7 @@
                 // グラフの設定
                 fill: false,
                 borderColor: "#c88baa",
-                tension: 0.1,
+                tension: 0.1,//折れ線のカーブ率
               },
             ],
           },
@@ -244,17 +242,12 @@
       // 初期化
       createChart();
 
-      // データ更新ボタンクリック時の処理
-      updateButton.addEventListener("click", async () => {
-        // グラフ再作成
-        await createChart();
-        // console.log(getGraphData());
-      });
-    function test(){
-      let today = new Date();
-      console.log(today);
-      const postDate = today.getFullYear() + "/" + (today.getMonth()+1) + "/" + today.getDate() + "  " + today.getHours() + ":" + today.getMinutes();
-      console.log(postDate);
-    }
+      // // データ更新ボタンクリック時の処理
+      // updateButton.addEventListener("click", async () => {
+      //   // グラフ再作成
+      //   await createChart();
+      //   // console.log(getGraphData());
+      // });
+
   </script>
 </html>
