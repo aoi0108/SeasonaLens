@@ -80,3 +80,7 @@ body{
   #drawer_input:checked ~ .nav_content {
     left: 0;/* メニューを画面に入れる */
 }
+
+.Arrow{
+  height:50px;
+}

@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="share.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@vectopus/atlas-icons/style.css"
+    />
     <title>Posts</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
@@ -23,7 +27,15 @@
         </ul>
       </nav>
     </div>
-
+    <!-- 本文 -->
+    <div class="PicContainer">
+      <botton type="button"
+        ><img src="images/arrow-left-circle.svg" alt="previous post"
+      /></botton>
+      <botton type="button"
+        ><img src="images/arrow-right-circle.svg" onclick="test()"
+      /></botton>
+    </div>
     <!-- グラフ -->
     <canvas id="updateChart"></canvas>
     <button id="updateButton">データ更新</button>
@@ -121,4 +133,21 @@
       });
     </script>
   </body>
+  <script>
+    function test() {
+      let today = new Date();
+      console.log(today);
+      const postDate =
+        today.getFullYear() +
+        "/" +
+        (today.getMonth() + 1) +
+        "/" +
+        today.getDate() +
+        "  " +
+        today.getHours() +
+        ":" +
+        today.getMinutes();
+      console.log(postDate);
+    }
+  </script>
 </html>
