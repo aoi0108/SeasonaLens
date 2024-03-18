@@ -59,14 +59,11 @@
        <!--みぎ矢印（進む）--> 
        <botton type="button" id="rightArrow"><img src="images/arrow-right-circle.svg"></botton>
       </div>
-      <!-- グラフ -->
-      <canvas id="updateChart"></canvas>
-      <!-- <div class="update-button">
-        <button id="updateButton">データ更新</button>
-      </div> -->
+
 
     </div>
-  </body>
+ 
+  <canvas id="lineChart"></canvas>
   <script>
     //データベースの参照を用意
     const db = firebase.firestore();
@@ -144,110 +141,34 @@
           document.getElementById("postDay").innerHTML = postDatas[i].postDate;
     }
 
-    let myUpdateChart; // グローバルスコープで変数を宣言
-      // キャンバスの要素を取得
-      const ctx = document.getElementById("updateChart").getContext("2d");
-      // const updateButton = document.getElementById("updateButton");
-      // グラフデータ取得関数
-      function getGraphData() {
-        const user = firebase.auth().currentUser;
-        if (!user) {
-            return Promise.resolve({ data: [], labels: [] }); // ユーザーがログインしていない場合は空のデータを返す
+
+    function drawGraph(){
+    const ctx = document.getElementById('lineChart').getContext('2d');
+    const postDates = postDatas.map(post => post.postDate); // 投稿日の配列を取得
+    const myLineChart = new Chart(ctx, {
+      type: 'line', // グラフの種類を指定
+      data: {
+        labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+        // labels: postDates,
+        datasets: [{
+          label: 'Change of Feelings',
+          data: [100, 200, 150, 300, 250, 350],
+          borderColor: '#c88baa',
+          tension: 0.1 // 折れ線のカーブ率を指定
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
         }
-        return db
-          .collection("PostData")
-          .doc(user.uid)
-          .collection("post")
-          .orderBy("timestamp", "asc") // タイムスタンプの昇順で取得
-          .get()
-          .then((snapshot) => {
-            const data = [];
-            const labels = [];
-            snapshot.forEach((doc) => {
-              const docData = doc.data();
-              // データから感情の数値を取得して配列に追加
-              data.push(docData.feeling);
-              labels.push(docData.postDate);
-            });
-            console.log("Data:", data); // データをコンソールに出力
-            console.log("Labels:", labels); // ラベルをコンソールに出力
-            return { data, labels };
-          })
-          .catch((error) => {
-            console.error("Error getting documents: ", error);
-            return { data: [], labels: [] }; // エラー時は空の配列を返す
-          });
       }
+    });
+  }
+  drawGraph();
 
-      // グラフ作成関数
-      async function createChart() {
-        const { data, labels } = await getGraphData();
-        // 既存のグラフがあれば破棄する
-        if (myUpdateChart) {
-          myUpdateChart.destroy();
-        }
-        myUpdateChart = new Chart(ctx, {
-          type: "line",
-          data: {
-            // データの設定
-            labels: labels,
-            datasets: [
-              {
-                label: "Feelings Transition",
-                data: data, // Firestoreから取得したデータをセット
-                // グラフの設定
-                fill: false,
-                borderColor: "#c88baa",
-                tension: 0.1,//折れ線のカーブ率
-              },
-            ],
-          },
-          options: {
-            // オプションの設定
-            scales: {
-              x: {
-                type: "linear",
-                position: "bottom",
-                title: {
-                  display: true,
-                  text: "Date",
-                },
-              },
-              y: {
-                min: 1,
-                max: 6,
-                ticks: {
-                  callback: function (value, index, values) {
-                    // 感情の数値からラベルを取得
-                    return [
-                      "😭",
-                      "😡",
-                      "🤯",
-                      "😌",
-                      "🥰",
-                      "😁",
-                    ][value - 1];
-                  },
-                },
-                title: {
-                  display: true,
-                  text: "Feeling",
-                },
-              },
-            },
-          },
-        });
-      }
-
-      // 初期化
-      createChart();
-
-      // // データ更新ボタンクリック時の処理
-      // updateButton.addEventListener("click", async () => {
-      //   // グラフ再作成
-      //   await createChart();
-      //   // console.log(getGraphData());
-      // });
-
+   
   </script>
+  </body>
 </html>
