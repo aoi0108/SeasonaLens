@@ -98,3 +98,17 @@ body{
 #feel{
   font-size:30px;
 }
+
+.update-button button{
+  border: 3px solid #c88baa;
+  border-radius: 100px;
+  display: block;
+  width: 150px;
+  padding: 15px;
+  box-sizing: border-box;
+  background: #c88baa;
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  margin: 10px auto;
+}
