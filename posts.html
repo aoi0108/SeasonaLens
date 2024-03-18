@@ -145,17 +145,35 @@
     }
 
 
-    function drawGraph(){
+    function drawGraph(i){
     const ctx = document.getElementById('lineChart').getContext('2d');
     const postDates = postDatas.map(post => post.postDate); // 投稿日の配列を取得
-    //console.log(postDates);
+    const feelings = [];
+     // 各投稿の感情データを取得
+    postDatas.forEach(post => {
+      if (post.feeling == "happy") {
+        feelings.push(100);
+      } else if (post.feeling == "relax") {
+        feelings.push(60);
+      } else if (post.feeling == "mad") {
+        feelings.push(10);
+      } else if (post.feeling == "crying") {
+        feelings.push(0);
+      } else if (post.feeling == "surprised") {
+        feelings.push(50);
+      } else if (post.feeling == "love") {
+        feelings.push(80);
+      }
+    });
+
     const myLineChart = new Chart(ctx, {
       type: 'line', // グラフの種類を指定
       data: {
         labels: postDates,
         datasets: [{
           label: 'Change of Feelings',
-          data: [80, 20, 100, 60, 40, 100, 80, 80, 60, 60, 40],//ダミーデータ
+          // data: [80, 20, 100, 60, 40, 100, 80, 80, 60, 60, 40],//ダミーデータ
+          data: feelings,
           borderColor: '#c88baa',
           tension: 0.1 // 折れ線のカーブ率を指定
           
