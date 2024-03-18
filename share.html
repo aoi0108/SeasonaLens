@@ -59,7 +59,6 @@
             id="happy"
             value="happy"
             name="feelings"
-            data-feeling="100"
             class="feel"
             required
           />
@@ -68,7 +67,6 @@
             type="radio"
             id="relax"
             value="relax"
-            data-feeling="50"
             name="feelings"
             class="feel"
           />
@@ -77,7 +75,6 @@
             type="radio"
             id="mad"
             value="mad"
-            data-feeling="10"
             name="feelings"
             class="feel"
           />
@@ -86,7 +83,6 @@
             type="radio"
             id="crying"
             value="crying"
-            data-feeling="5"
             name="feelings"
             class="feel"
           />
@@ -95,7 +91,6 @@
             type="radio"
             id="surprised"
             value="surprised"
-            data-feeling="60"
             name="feelings"
             class="feel"
           />
@@ -104,7 +99,6 @@
             type="radio"
             id="love"
             value="love"
-            data-feeling="80"
             name="feelings"
             class="feel"
           />
@@ -125,7 +119,16 @@
       //event.preventDefault();
       console.log("click");
       let today = new Date();
-      const postDate = today.getFullYear() + "/" + (today.getMonth()+1) + "/" + today.getDate() + "  " + today.getHours() + ":" + today.getMinutes();
+      const postDate =
+        today.getFullYear() +
+        "/" +
+        (today.getMonth() + 1) +
+        "/" +
+        today.getDate() +
+        "  " +
+        today.getHours() +
+        ":" +
+        today.getMinutes();
 
       const user = firebase.auth().currentUser;
       if (user) {
@@ -156,7 +159,7 @@
                   Picture: url,
                   caption: caption,
                   feeling: feelData,
-                  postDate: postDate
+                  postDate: postDate,
                 })
                 .then(function () {
                   console.log("Document successfully written!");
