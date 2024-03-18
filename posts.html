@@ -109,7 +109,7 @@
             }else{
               j++;
             }
-            console.log("display:"+j);
+            //console.log("display:"+j);
             displayPost(j);
           })
 
@@ -122,11 +122,12 @@
 
     //受け取った数字をインデックスとして、対応する投稿を表示する関数
     function displayPost(i){
+  
       //投稿の表示-写真とキャプション
       document.getElementById("postPic").src = postDatas[i].Picture;
-          document.getElementById("caption").innerHTML = postDatas[i].caption;
+      document.getElementById("caption").innerHTML = postDatas[i].caption;
 
-          ////投稿の表示-絵文字
+          //投稿の表示-絵文字
           if(postDatas[i].feeling=="happy"){
             document.getElementById("feel").innerHTML = "😁"
           }else if(postDatas[i].feeling=="relax"){
@@ -140,6 +141,7 @@
           }else if(postDatas[i].feeling=="love"){
             document.getElementById("feel").innerHTML = "🥰"
           }
+
           //投稿の表示-投稿日
           document.getElementById("postDay").innerHTML = postDatas[i].postDate;
     }
@@ -220,12 +222,12 @@
                   callback: function (value, index, values) {
                     // 感情の数値からラベルを取得
                     return [
-                      "Crying",
-                      "Mad",
-                      "Surprised",
-                      "Relax",
-                      "Love",
-                      "Happy",
+                      "😭",
+                      "😡",
+                      "🤯",
+                      "😌",
+                      "🥰",
+                      "😁",
                     ][value - 1];
                   },
                 },
