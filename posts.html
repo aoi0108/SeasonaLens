@@ -45,23 +45,71 @@
       </nav>
     </div>
     <!-- 本文 -->
-    <div class="PicContainer">
-      <botton type="button"
-        ><img src="images/arrow-left-circle.svg" alt="previous post"
-      /></botton>
-      <botton type="button"
-        ><img src="images/arrow-right-circle.svg" onclick="test()"
-      /></botton>
+    <div class="PostAndArrowContainer">
+      <botton type="button"><img src="images/arrow-left-circle.svg"  alt="previous post" ></botton>
+
+       <div class="postContainer">
+        <img id="postPic" src="" style="height:300px;">
+        <h3 id="caption"></h3>
+        <h3 id="feel"></h3>
+        <h3 id="postDay"></h3>
+
+       </div>      
+       <botton type="button"><img src="images/arrow-right-circle.svg" onclick="test()"></botton>
+      </div>
+      <!-- グラフ -->
+      <canvas id="updateChart"></canvas>
+      <div class="update-button">
+        <button id="updateButton">データ更新</button>
+      </div>
+
     </div>
-    <!-- グラフ -->
-    <canvas id="updateChart"></canvas>
-    <div class="update-button">
-      <button id="updateButton">データ更新</button>
-    </div>
-    <script>
-      let myUpdateChart; // グローバルスコープで変数を宣言
+  </body>
+  <script>
+  
+    const db = firebase.firestore();
+    //const user = firebase.auth().currentUser;
+
+    let postDatas = [];
+    let i = 0;
+
+    firebase.auth().onAuthStateChanged(user => {
+      if(user){
+        db.collection("PostData").doc(user.uid).collection("post").get().then((snapShot) => {
+          snapShot.forEach(doc => {
+            postDatas[i] = doc.data();
+            i++;
+          });
+          console.log(postDatas);
+          
+          document.getElementById("postPic").src = postDatas[0].Picture;
+          document.getElementById("caption").innerHTML = postDatas[0].caption;
+
+          if(postDatas[0].feeling=="happy"){
+            document.getElementById("feel").innerHTML = "😁"
+          }else if(postDatas[0].feeling=="relax"){
+            document.getElementById("feel").innerHTML = "😌"
+          }else if(postDatas[0].feeling=="mad"){
+            document.getElementById("feel").innerHTML = "😡"
+          }else if(postDatas[0].feeling=="crying"){
+            document.getElementById("feel").innerHTML = "😭"
+          }else if(postDatas[0].feeling=="surprised"){
+            document.getElementById("feel").innerHTML = "🤯"
+          }else if(postDatas[0].feeling=="love"){
+            document.getElementById("feel").innerHTML = "🥰"
+          }
+
+          document.getElementById("postDay").innerHTML = postDatas[0].postDate;
+
+        });
+        
+        }else{
+          console.log("please login.")
+      }
+    });
+
+    let myUpdateChart; // グローバルスコープで変数を宣言
       // キャンバスの要素を取得
-      const db = firebase.firestore();
       const ctx = document.getElementById("updateChart").getContext("2d");
       const updateButton = document.getElementById("updateButton");
       // グラフデータ取得関数
@@ -158,22 +206,11 @@
         await createChart();
         console.log(getGraphData());
       });
-
-      function test() {
-        let today = new Date();
-        console.log(today);
-        const postDate =
-          today.getFullYear() +
-          "/" +
-          (today.getMonth() + 1) +
-          "/" +
-          today.getDate() +
-          "  " +
-          today.getHours() +
-          ":" +
-          today.getMinutes();
-        console.log(postDate);
-      }
-    </script>
-  </body>
+    function test(){
+      let today = new Date();
+      console.log(today);
+      const postDate = today.getFullYear() + "/" + (today.getMonth()+1) + "/" + today.getDate() + "  " + today.getHours() + ":" + today.getMinutes();
+      console.log(postDate);
+    }
+  </script>
 </html>

@@ -81,8 +81,22 @@ body{
     left: 0;/* メニューを画面に入れる */
 }
 
-.Arrow{
-  height:50px;
+
+.PostAndArrowContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.postContainer {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  color: #555555; /* 文字の色を指定 */
+}
+
+#feel{
+  font-size:30px;
 }
 
 .update-button button{
