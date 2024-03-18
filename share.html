@@ -130,7 +130,7 @@
         const storageRef = firebase.storage().ref();
 
         const postPictRef = storageRef.child(
-          "postPictures/" + "testid" + "/" + picture.name
+          "postPictures/" + user.uid + "/" + picture.name
         );
         postPictRef
           .put(picture)
