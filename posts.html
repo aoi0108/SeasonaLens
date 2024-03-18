@@ -2,8 +2,30 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="share.css" />
-    <title>Share</title>
+    <link rel="stylesheet" href="posts.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@vectopus/atlas-icons/style.css"
+    />
+    <title>Posts</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCmiBcZ3VCgEAtDMgyg0vDFhNyi7H2xcpk",
+        authDomain: "seasonal-lens.firebaseapp.com",
+        databaseURL: "https://seasonal-lens-default-rtdb.firebaseio.com",
+        projectId: "seasonal-lens",
+        storageBucket: "seasonal-lens.appspot.com",
+        messagingSenderId: "961849470376",
+        appId: "1:961849470376:web:cfa47d3a40d59a1116c19d",
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
   </head>
   <body>
     <!-- ハンバーガーメニュー部分 -->
@@ -22,5 +44,208 @@
         </ul>
       </nav>
     </div>
+    <!-- 本文 -->
+    <div class="PostAndArrowContainer">
+      <!--ひだり矢印（戻る）-->
+      <botton type="button" id="leftArrow"><img src="images/arrow-left-circle.svg"  alt="previous post" ></botton>
+
+       <div class="postContainer">
+        <p id="postDay"></p>
+        <img id="postPic" src="" style="height:300px;">
+        <p id="feel"></p>
+        <p id="caption"></p>
+
+       </div>     
+       <!--みぎ矢印（進む）--> 
+       <botton type="button" id="rightArrow"><img src="images/arrow-right-circle.svg"></botton>
+      </div>
+      <!-- グラフ -->
+      <canvas id="updateChart"></canvas>
+      <div class="update-button">
+        <button id="updateButton">データ更新</button>
+      </div>
+
+    </div>
   </body>
+  <script>
+    //データベースの参照を用意
+    const db = firebase.firestore();
+    
+    //ユーザーの投稿データすべてを収容する配列
+    let postDatas = [];
+    let i = 0;
+
+    //ボタンを取得
+    const LButton = document.getElementById("leftArrow");
+    const RButton = document.getElementById("rightArrow");
+
+    firebase.auth().onAuthStateChanged(user => {
+      if(user){
+        //投稿データの取得
+        db.collection("PostData").doc(user.uid).collection("post").get().then((snapShot) => {
+          snapShot.forEach(doc => {
+            postDatas[i] = doc.data();
+            i++;
+          });
+          console.log(postDatas);
+          
+          //切り替え用の変数
+          let j = 0;
+          displayPost(j);
+
+          LButton.addEventListener('click',(event)=>{
+            if(j-1<0){
+              j=postDatas.length-1;
+            }else{
+              j--;
+            }
+            console.log("display:"+j);
+            displayPost(j);
+          })
+
+          RButton.addEventListener('click',(event)=>{
+            if(j+1 > postDatas.length-1){
+              j=0;
+            }else{
+              j++;
+            }
+            console.log("display:"+j);
+            displayPost(j);
+          })
+
+        });
+        
+        }else{
+          console.log("please login.")
+      }
+    });
+
+    //受け取った数字をインデックスとして、対応する投稿を表示する関数
+    function displayPost(i){
+      //投稿の表示-写真とキャプション
+      document.getElementById("postPic").src = postDatas[i].Picture;
+          document.getElementById("caption").innerHTML = postDatas[i].caption;
+
+          ////投稿の表示-絵文字
+          if(postDatas[i].feeling=="happy"){
+            document.getElementById("feel").innerHTML = "😁"
+          }else if(postDatas[i].feeling=="relax"){
+            document.getElementById("feel").innerHTML = "😌"
+          }else if(postDatas[i].feeling=="mad"){
+            document.getElementById("feel").innerHTML = "😡"
+          }else if(postDatas[i].feeling=="crying"){
+            document.getElementById("feel").innerHTML = "😭"
+          }else if(postDatas[i].feeling=="surprised"){
+            document.getElementById("feel").innerHTML = "🤯"
+          }else if(postDatas[i].feeling=="love"){
+            document.getElementById("feel").innerHTML = "🥰"
+          }
+          //投稿の表示-投稿日
+          document.getElementById("postDay").innerHTML = postDatas[i].postDate;
+    }
+
+    let myUpdateChart; // グローバルスコープで変数を宣言
+      // キャンバスの要素を取得
+      const ctx = document.getElementById("updateChart").getContext("2d");
+      const updateButton = document.getElementById("updateButton");
+      // グラフデータ取得関数
+      function getGraphData() {
+        return db
+          .collection("PostData")
+          .doc("testid")
+          .collection("post")
+          .orderBy("timestamp", "asc") // タイムスタンプの昇順で取得
+          .get()
+          .then((snapshot) => {
+            const data = [];
+            const labels = [];
+            snapshot.forEach((doc) => {
+              const docData = doc.data();
+              // データから感情の数値を取得して配列に追加
+              data.push(docData.feelData);
+              labels.push(docData.postDate);
+            });
+            return { data, labels };
+          })
+          .catch((error) => {
+            console.error("Error getting documents: ", error);
+            return { data: [], labels: [] }; // エラー時は空の配列を返す
+          });
+      }
+
+      // グラフ作成関数
+      async function createChart() {
+        const { data, labels } = await getGraphData();
+        // 既存のグラフがあれば破棄する
+        if (myUpdateChart) {
+          myUpdateChart.destroy();
+        }
+        myUpdateChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            // データの設定
+            labels: Array.from({ length: data.length }, (_, i) => i + 1), // ラベルは投稿の順番
+            datasets: [
+              {
+                label: "Feelings Transition",
+                data: data, // Firestoreから取得したデータをセット
+                // グラフの設定
+                fill: false,
+                borderColor: "#c88baa",
+                tension: 0.1,
+              },
+            ],
+          },
+          options: {
+            // オプションの設定
+            scales: {
+              x: {
+                type: "linear",
+                position: "bottom",
+                title: {
+                  display: true,
+                  text: "Date",
+                },
+              },
+              y: {
+                min: 1,
+                max: 6,
+                ticks: {
+                  callback: function (value, index, values) {
+                    // 感情の数値からラベルを取得
+                    return [
+                      "Crying",
+                      "Mad",
+                      "Surprised",
+                      "Relax",
+                      "Love",
+                      "Happy",
+                    ][value - 1];
+                  },
+                },
+                title: {
+                  display: true,
+                  text: "Feeling",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // 初期化
+      createChart();
+
+      // データ更新ボタンクリック時の処理
+      updateButton.addEventListener("click", async () => {
+        // グラフ再作成
+        await createChart();
+      });
+    function test(){
+      let today = new Date();
+      console.log(today);
+      const postDate = today.getFullYear() + "/" + (today.getMonth()+1) + "/" + today.getDate() + "  " + today.getHours() + ":" + today.getMinutes();
+      console.log(postDate);
+    }
+  </script>
 </html>

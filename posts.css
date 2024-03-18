@@ -80,3 +80,46 @@ body{
   #drawer_input:checked ~ .nav_content {
     left: 0;/* メニューを画面に入れる */
 }
+
+
+.PostAndArrowContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.postContainer {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin: 20px;
+  color: #555555; /* 文字の色を指定 */
+}
+
+#postDay{
+  color:#c88baa;
+}
+
+#feel{
+  font-size:30px;
+  margin:5px;
+  margin-top: 20px;
+}
+
+#caption{
+  margin:5px;
+}
+
+.update-button button{
+  border: 3px solid #c88baa;
+  border-radius: 100px;
+  display: block;
+  width: 150px;
+  padding: 15px;
+  box-sizing: border-box;
+  background: #c88baa;
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  margin: 10px auto;
+}

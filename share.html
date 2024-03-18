@@ -46,7 +46,7 @@
       <h1>Share</h1>
       <label class="upload-label">
         写真を選択
-        <input type="file" accept="image/*" required />
+        <input type="file" id="postPic" accept="image/*" required />
       </label>
       <form id="postForm">
         <!-- <input type="file" id="postPic" accept="image/*" required /> -->
@@ -59,6 +59,7 @@
             id="happy"
             value="happy"
             name="feelings"
+            data-feeling="100"
             class="feel"
             required
           />
@@ -67,6 +68,7 @@
             type="radio"
             id="relax"
             value="relax"
+            data-feeling="50"
             name="feelings"
             class="feel"
           />
@@ -75,6 +77,7 @@
             type="radio"
             id="mad"
             value="mad"
+            data-feeling="10"
             name="feelings"
             class="feel"
           />
@@ -83,6 +86,7 @@
             type="radio"
             id="crying"
             value="crying"
+            data-feeling="5"
             name="feelings"
             class="feel"
           />
@@ -91,6 +95,7 @@
             type="radio"
             id="surprised"
             value="surprised"
+            data-feeling="60"
             name="feelings"
             class="feel"
           />
@@ -99,13 +104,16 @@
             type="radio"
             id="love"
             value="love"
+            data-feeling="80"
             name="feelings"
             class="feel"
           />
           <label for="love" class="feel-label">🥰</label>
         </div>
       </form>
-      <button id="submit" type="submit">Share</button>
+      <div class="submit-button">
+        <button id="submit" type="submit">Share</button>
+      </div>
     </div>
   </body>
   <script>
@@ -116,6 +124,8 @@
     button.addEventListener("click", function (event) {
       //event.preventDefault();
       console.log("click");
+      let today = new Date();
+      const postDate = today.getFullYear() + "/" + (today.getMonth()+1) + "/" + today.getDate() + "  " + today.getHours() + ":" + today.getMinutes();
 
       const user = firebase.auth().currentUser;
       if (user) {
@@ -130,7 +140,7 @@
         const storageRef = firebase.storage().ref();
 
         const postPictRef = storageRef.child(
-          "postPictures/" + "testid" + "/" + picture.name
+          "postPictures/" + user.uid + "/" + picture.name
         );
         postPictRef
           .put(picture)
@@ -140,17 +150,18 @@
               // FirestoreにユーザーIDと共にデータを保存
               //user.uid
               db.collection("PostData")
-                .doc("testid")
+                .doc(user.uid)
                 .collection("post")
                 .add({
                   Picture: url,
                   caption: caption,
                   feeling: feelData,
+                  postDate: postDate
                 })
                 .then(function () {
                   console.log("Document successfully written!");
                   alert("post success!");
-                  //Form.reset();
+                  form.reset();
                   //window.location.href = "home.html";
                 })
                 .catch(function (error) {
