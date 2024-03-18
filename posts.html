@@ -85,6 +85,9 @@
             i++;
           });
           console.log(postDatas);
+
+          //グラフを描画する
+          drawGraph();
           
           //切り替え用の変数
           let j = 0;
@@ -145,20 +148,28 @@
     function drawGraph(){
     const ctx = document.getElementById('lineChart').getContext('2d');
     const postDates = postDatas.map(post => post.postDate); // 投稿日の配列を取得
+    console.log(postDates);
     const myLineChart = new Chart(ctx, {
       type: 'line', // グラフの種類を指定
       data: {
-        labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-        // labels: postDates,
+        //labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+        labels: postDates,
         datasets: [{
           label: 'Change of Feelings',
-          data: [100, 200, 150, 300, 250, 350],
+          data: [80, 20, 100, 60, 40, 100, 80, 80, 60, 60, 40],//ダミーデータ
           borderColor: '#c88baa',
           tension: 0.1 // 折れ線のカーブ率を指定
+          
         }]
       },
       options: {
         scales: {
+          x:{
+            title:{
+              display: true,
+              text: "Date"
+            }
+          },
           y: {
             beginAtZero: true
           }
@@ -166,7 +177,7 @@
       }
     });
   }
-  drawGraph();
+
 
    
   </script>
