@@ -74,22 +74,24 @@
           .get()
           .then((snapshot) => {
             const data = [];
+            const labels = [];
             snapshot.forEach((doc) => {
               const docData = doc.data();
               // データから感情の数値を取得して配列に追加
               data.push(docData.feelData);
+              labels.push(docData.postDate);
             });
-            return data;
+            return { data, labels };
           })
           .catch((error) => {
             console.error("Error getting documents: ", error);
-            return [];
+            return { data: [], labels: [] }; // エラー時は空の配列を返す
           });
       }
 
       // グラフ作成関数
       async function createChart() {
-        const data = await getGraphData();
+        const { data, labels } = await getGraphData();
         // 既存のグラフがあれば破棄する
         if (myUpdateChart) {
           myUpdateChart.destroy();
