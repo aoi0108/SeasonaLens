@@ -120,15 +120,6 @@ body{
     margin: 0 auto;
 }
 
-/* .img-frame::after{
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, .5);
-} */
 
 .msg{
     font-size: 100px;
@@ -154,8 +145,9 @@ body{
    .img-frame{
     width: 100%;
     height: 1800px;
+    position: relative;
    }
-   .img-01, .img-02, .img-03{
+   .img-01, .img-02, .img-03, .img-04{
     position: absolute;
     top:0;
     left:0;
@@ -177,6 +169,11 @@ body{
     background-image: url('./images/autumn.jpeg');
     animation: slide-animation-03 15s infinite;
    }
+
+   .img-04{
+    background-image: url('./images/winter.jpeg');
+    animation: slide-animation-04 15s infinite;
+   }
 }
 @keyframes slide-animation-01 {
     0% {opacity: 1; transform: scale(1.0);}
@@ -197,7 +194,17 @@ body{
     0% {opacity: 0;}
     60% {opacity: 0; transform: scale(1.0);}
     70% {opacity: 1;}
-    90% {opacity: 1;}
+    80% {opacity: 1;}
    100% {opacity: 0; transform: scale(1.1);}
+}
+
+@keyframes slide-animation-04 {
+  0% {opacity: 0;}
+  60% {opacity: 0;}
+  70% {opacity: 0;transform: scale(1.0);}
+  80% {opacity: 0;}
+  90% {opacity: 1;}
+  100% {opacity: 1; transform: scale(1.1);}
+
 }
 
