@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="home.css" />
+    <link rel="shortcut icon" href="images/favicon_flo.png">
     <title>Home</title>
 
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
@@ -58,22 +59,28 @@
         <p class="subtitle">あなたと季節をつなげる</p>
       </div>
     </div>
+    
+    <div id="sekki-container">
+      <h3>今日の暦</h3>
+      <h3 id="sekki">暦の表示</h3>
+      </div>
 
     <div class="buttons">
       <a href="share.html" class="button">Share</a>
       <a href="posts.html" class="button">Posts</a>
     </div>
-
-    <div id="sekki-container">
-    <p id="sekki"></p>
-    </div>
   </body>
 <script>
+  //二十四節気の表示
   function getNijushiSekki() {
+    
     let date = new Date();
     const month = date.getMonth() + 1; // 月は0から始まるため、+1する
     const day = date.getDate();
-
+    /* 
+    const month =1;
+    const day = 22;
+    */
     // 日本の二十四節気の一覧
     const nijushiSekkiList = [
         { name: '立春', startMonth: 2, startDay: 4 },
@@ -106,32 +113,29 @@
     ];
 
     // 日付が節気に該当するかどうかを確認
+
     for (let i = 0; i < nijushiSekkiList.length; i++) {
         const sekki = nijushiSekkiList[i];
-        let temp;
-        if(i==nijushiSekkiList.length){
-          temp = 0;
-        }else{
-          temp = i+1;
-        }
-        const nextSekki = nijushiSekkiList[temp];
-
-        if(month==sekki.startMonth){
-          if(day>=sekki.startDay || day<= nextSekki.startDay){
+        let nextSekkiIndex = (i + 1) % nijushiSekkiList.length;
+        const nextSekki = nijushiSekkiList[nextSekkiIndex];
+        
+        if (month === sekki.startMonth && day >= sekki.startDay) {
+          if (month === nextSekki.startMonth && day < nextSekki.startDay) {
+                return sekki.name;
+            }else{
+              return nextSekki.name;
+            }
+        }else if (month === nextSekki.startMonth && day < nextSekki.startDay) {
             return sekki.name;
-          }
-        }else if(month==sekki.startMonth+1){
-          if(day<=nextSekki.startDay){
-            return sekki.name;
-          }
         }
     }
 
     // 二十四節気に該当しない場合は空文字を返す
     return '';
   }
+ 
 
-  document.getElementById("sekki").innnerHTML = getNijushiSekki();
+  document.getElementById("sekki").innerHTML = getNijushiSekki();
   console.log(getNijushiSekki());
 
   document.getElementById('logout').addEventListener('click', function(event) {
