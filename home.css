@@ -201,3 +201,24 @@ body{
    100% {opacity: 0; transform: scale(1.1);}
 }
 
+#sekki-container{
+  border-radius: 10px;
+  width: 300px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  flex-flow: column;
+  margin: 0 auto;
+  background-color:#fcfcfc;
+ 
+  color:#c88baa;
+}
+
+#sekki{
+  font-size:40px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
