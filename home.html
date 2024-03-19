@@ -4,6 +4,25 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="home.css" />
     <title>Home</title>
+
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCmiBcZ3VCgEAtDMgyg0vDFhNyi7H2xcpk",
+        authDomain: "seasonal-lens.firebaseapp.com",
+        databaseURL: "https://seasonal-lens-default-rtdb.firebaseio.com",
+        projectId: "seasonal-lens",
+        storageBucket: "seasonal-lens.appspot.com",
+        messagingSenderId: "961849470376",
+        appId: "1:961849470376:web:cfa47d3a40d59a1116c19d",
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+
   </head>
   <body>
     <!-- ハンバーガーメニュー部分 -->
@@ -20,6 +39,7 @@
           <li class="nav_item"><a href="login.html">Login</a></li>
           <li class="nav_item"><a href="share.html">Share</a></li>
           <li class="nav_item"><a href="posts.html">Posts</a></li>
+          <li class="nav_item"><a id="logout">Logout</a></li>
         </ul>
       </nav>
     </div>
@@ -43,5 +63,88 @@
       <a href="share.html" class="button">Share</a>
       <a href="posts.html" class="button">Posts</a>
     </div>
+
+    <div id="sekki-container">
+    <p id="sekki"></p>
+    </div>
   </body>
+<script>
+  function getNijushiSekki() {
+    let date = new Date();
+    const month = date.getMonth() + 1; // 月は0から始まるため、+1する
+    const day = date.getDate();
+
+    // 日本の二十四節気の一覧
+    const nijushiSekkiList = [
+        { name: '立春', startMonth: 2, startDay: 4 },
+        { name: '雨水', startMonth: 2, startDay: 19 },
+        { name: '啓蟄', startMonth: 3, startDay: 5 },
+        { name: '春分', startMonth: 3, startDay: 21 },
+        { name: '清明', startMonth: 4, startDay: 5 },
+        { name: '穀雨', startMonth: 4, startDay: 20 },
+
+        { name: '立夏', startMonth: 5, startDay: 5 },
+        { name: '小満', startMonth: 5, startDay: 21 },
+        { name: '芒種', startMonth: 6, startDay: 6 },
+        { name: '夏至', startMonth: 6, startDay: 21 },
+        { name: '小暑', startMonth: 7, startDay: 7 },
+        { name: '大暑', startMonth: 7, startDay: 23 },
+
+        { name: '立秋', startMonth: 8, startDay: 8 },
+        { name: '処暑', startMonth: 8, startDay: 23 },
+        { name: '白露', startMonth: 9, startDay: 8 },
+        { name: '秋分', startMonth: 9, startDay: 23 },
+        { name: '寒露', startMonth: 10, startDay: 8 },
+        { name: '霜降', startMonth: 10, startDay: 24 },
+
+        { name: '立冬', startMonth: 11, startDay: 7 },
+        { name: '小雪', startMonth: 11, startDay: 22 },
+        { name: '大雪', startMonth: 12, startDay: 7 },
+        { name: '冬至', startMonth: 12, startDay: 21 },
+        { name: '小寒', startMonth: 1, startDay: 5 },
+        { name: '大寒', startMonth: 1, startDay: 21 }
+    ];
+
+    // 日付が節気に該当するかどうかを確認
+    for (let i = 0; i < nijushiSekkiList.length; i++) {
+        const sekki = nijushiSekkiList[i];
+        let temp;
+        if(i==nijushiSekkiList.length){
+          temp = 0;
+        }else{
+          temp = i+1;
+        }
+        const nextSekki = nijushiSekkiList[temp];
+
+        if(month==sekki.startMonth){
+          if(day>=sekki.startDay || day<= nextSekki.startDay){
+            return sekki.name;
+          }
+        }else if(month==sekki.startMonth+1){
+          if(day<=nextSekki.startDay){
+            return sekki.name;
+          }
+        }
+    }
+
+    // 二十四節気に該当しない場合は空文字を返す
+    return '';
+  }
+
+  document.getElementById("sekki").innnerHTML = getNijushiSekki();
+  console.log(getNijushiSekki());
+
+  document.getElementById('logout').addEventListener('click', function(event) {
+            event.preventDefault();
+            firebase.auth().signOut().then(() => {
+                console.log('User signed out.');
+                alert("ログアウトしました");
+                window.location.href = 'home.html';
+            }).catch((error) => {
+                console.error('Sign Out Error', error);
+            });
+        });
+
+</script>
+
 </html>

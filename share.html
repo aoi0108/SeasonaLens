@@ -38,12 +38,14 @@
         <ul class="nav_list">
           <li class="nav_item"><a href="home.html">Home</a></li>
           <li class="nav_item"><a href="posts.html">Posts</a></li>
+          <li class="nav_item"><a id="logout">Logout</a></li>
         </ul>
       </nav>
     </div>
 
     <div class="container">
       <h1>Share</h1>
+      <img class="preview-image" src="#" alt="preview image" style="display:none;" />
       <label class="upload-label">
         写真を選択
         <input type="file" id="postPic" accept="image/*" required />
@@ -112,9 +114,38 @@
   </body>
   <script>
     const db = firebase.firestore();
+    //フォームとボタンの取得
     const form = document.getElementById("postForm");
     const button = document.getElementById("submit");
+    //画像表示エリアの取得
+    const postPicInput = document.getElementById('postPic');
+    const previewImage = document.querySelector('.preview-image');
 
+    //画像をプレビュー
+    postPicInput.addEventListener('change', function() {
+      //document.getElementsByClassName("upload-label")[0].innerHTML = "";
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+          
+          previewImage.src = event.target.result;
+          previewImage.style.display = 'inline-block';
+          
+        };
+
+        reader.readAsDataURL(file);
+      } else {
+        previewImage.style.backgroundImage = "none";
+        /*
+        previewImage.src = '#';
+        previewImage.style.display = 'none';
+        */
+      }
+    });
+
+    //投稿を送信
     button.addEventListener("click", function (event) {
       //event.preventDefault();
       console.log("click");
@@ -182,5 +213,16 @@
         alert("投稿にはログインが必要です");
       }
     });
+
+    document.getElementById('logout').addEventListener('click', function(event) {
+            event.preventDefault();
+            firebase.auth().signOut().then(() => {
+                console.log('User signed out.');
+                alert("ログアウトしました");
+                window.location.href = 'home.html';
+            }).catch((error) => {
+                console.error('Sign Out Error', error);
+            });
+        });
   </script>
 </html>
