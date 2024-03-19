@@ -71,7 +71,7 @@ body{
     transition: .5s;
   }
 
-  .nav_content a{
+   .nav_content a{
     color: #c88baa;
     text-decoration: none;
     font-size: 50px;
