@@ -70,6 +70,12 @@ body{
     background: #fff;
     transition: .5s;
   }
+
+  .nav_content a{
+    color: #c88baa;
+    text-decoration: none;
+    font-size: 50px;
+  }
   
   /* メニュー黒ポチを消す */
   .nav_list {

@@ -59,14 +59,11 @@
        <!--みぎ矢印（進む）--> 
        <botton type="button" id="rightArrow"><img src="images/arrow-right-circle.svg"></botton>
       </div>
-      <!-- グラフ -->
-      <canvas id="updateChart"></canvas>
-      <div class="update-button">
-        <button id="updateButton">データ更新</button>
-      </div>
+
 
     </div>
-  </body>
+ 
+  <canvas id="lineChart"></canvas>
   <script>
     //データベースの参照を用意
     const db = firebase.firestore();
@@ -88,6 +85,9 @@
             i++;
           });
           console.log(postDatas);
+
+          //グラフを描画する
+          drawGraph();
           
           //切り替え用の変数
           let j = 0;
@@ -109,7 +109,7 @@
             }else{
               j++;
             }
-            console.log("display:"+j);
+            //console.log("display:"+j);
             displayPost(j);
           })
 
@@ -148,102 +148,52 @@
         img.src = postDatas[i].Picture;
     }
 
-    let myUpdateChart; // グローバルスコープで変数を宣言
-      // キャンバスの要素を取得
-      const ctx = document.getElementById("updateChart").getContext("2d");
-      const updateButton = document.getElementById("updateButton");
-      // グラフデータ取得関数
-      function getGraphData() {
-        return db
-          .collection("PostData")
-          .doc("testid")
-          .collection("post")
-          .orderBy("timestamp", "asc") // タイムスタンプの昇順で取得
-          .get()
-          .then((snapshot) => {
-            const data = [];
-            const labels = [];
-            snapshot.forEach((doc) => {
-              const docData = doc.data();
-              // データから感情の数値を取得して配列に追加
-              data.push(docData.feelData);
-              labels.push(docData.postDate);
-            });
-            return { data, labels };
-          })
-          .catch((error) => {
-            console.error("Error getting documents: ", error);
-            return { data: [], labels: [] }; // エラー時は空の配列を返す
-          });
-      }
 
-      // グラフ作成関数
-      async function createChart() {
-        const { data, labels } = await getGraphData();
-        // 既存のグラフがあれば破棄する
-        if (myUpdateChart) {
-          myUpdateChart.destroy();
+    function drawGraph(i){
+    const ctx = document.getElementById('lineChart').getContext('2d');
+    let sortedPosts = postDatas.slice().sort((a, b) => new Date(a.postDate) - new Date(b.postDate)); // 日付順に投稿データをソート
+    const postDates =  sortedPosts.map(post => post.postDate); // 投稿日の配列を取得
+    const feelings = sortedPosts.map(post => {
+    if (post.feeling == "happy") {
+      return 100;
+    } else if (post.feeling == "relax") {
+      return 60;
+    } else if (post.feeling == "mad") {
+      return 10;
+    } else if (post.feeling == "crying") {
+      return 0;
+    } else if (post.feeling == "surprised") {
+      return 50;
+    } else if (post.feeling == "love") {
+      return 80;
+    }
+  });
+
+    const myLineChart = new Chart(ctx, {
+      type: 'line', // グラフの種類を指定
+      data: {
+        labels: postDates,
+        datasets: [{
+          label: 'Change of Feelings',
+          data: feelings,
+          borderColor: '#c88baa',
+          tension: 0.1 // 折れ線のカーブ率を指定
+          
+        }]
+      },
+      options: {
+        scales: {
+         
+          y: {
+            beginAtZero: true
+          }
         }
-        myUpdateChart = new Chart(ctx, {
-          type: "line",
-          data: {
-            // データの設定
-            labels: Array.from({ length: data.length }, (_, i) => i + 1), // ラベルは投稿の順番
-            datasets: [
-              {
-                label: "Feelings Transition",
-                data: data, // Firestoreから取得したデータをセット
-                // グラフの設定
-                fill: false,
-                borderColor: "#c88baa",
-                tension: 0.1,
-              },
-            ],
-          },
-          options: {
-            // オプションの設定
-            scales: {
-              x: {
-                type: "linear",
-                position: "bottom",
-                title: {
-                  display: true,
-                  text: "Date",
-                },
-              },
-              y: {
-                min: 1,
-                max: 6,
-                ticks: {
-                  callback: function (value, index, values) {
-                    // 感情の数値からラベルを取得
-                    return [
-                      "Crying",
-                      "Mad",
-                      "Surprised",
-                      "Relax",
-                      "Love",
-                      "Happy",
-                    ][value - 1];
-                  },
-                },
-                title: {
-                  display: true,
-                  text: "Feeling",
-                },
-              },
-            },
-          },
-        });
       }
+    });
+  }
 
-      // 初期化
-      createChart();
 
-      // データ更新ボタンクリック時の処理
-      updateButton.addEventListener("click", async () => {
-        // グラフ再作成
-        await createChart();
-      });
+   
   </script>
+  </body>
 </html>
