@@ -4,6 +4,25 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="home.css" />
     <title>Home</title>
+
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCmiBcZ3VCgEAtDMgyg0vDFhNyi7H2xcpk",
+        authDomain: "seasonal-lens.firebaseapp.com",
+        databaseURL: "https://seasonal-lens-default-rtdb.firebaseio.com",
+        projectId: "seasonal-lens",
+        storageBucket: "seasonal-lens.appspot.com",
+        messagingSenderId: "961849470376",
+        appId: "1:961849470376:web:cfa47d3a40d59a1116c19d",
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+
   </head>
   <body>
     <!-- ハンバーガーメニュー部分 -->
@@ -20,6 +39,7 @@
           <li class="nav_item"><a href="login.html">Login</a></li>
           <li class="nav_item"><a href="share.html">Share</a></li>
           <li class="nav_item"><a href="posts.html">Posts</a></li>
+          <li class="nav_item"><a id="logout">Logout</a></li>
         </ul>
       </nav>
     </div>
@@ -113,6 +133,17 @@
 
   document.getElementById("sekki").innnerHTML = getNijushiSekki();
   console.log(getNijushiSekki());
+
+  document.getElementById('logout').addEventListener('click', function(event) {
+            event.preventDefault();
+            firebase.auth().signOut().then(() => {
+                console.log('User signed out.');
+                alert("ログアウトしました");
+                window.location.href = 'home.html';
+            }).catch((error) => {
+                console.error('Sign Out Error', error);
+            });
+        });
 
 </script>
 

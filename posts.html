@@ -41,6 +41,7 @@
         <ul class="nav_list">
           <li class="nav_item"><a href="home.html">Home</a></li>
           <li class="nav_item"><a href="share.html">Share</a></li>
+          <li class="nav_item"><a id="logout">Logout</a></li>
         </ul>
       </nav>
     </div>
@@ -191,6 +192,17 @@
       }
     });
   }
+
+  document.getElementById('logout').addEventListener('click', function(event) {
+            event.preventDefault();
+            firebase.auth().signOut().then(() => {
+                console.log('User signed out.');
+                alert("ログアウトしました");
+                window.location.href = 'home.html';
+            }).catch((error) => {
+                console.error('Sign Out Error', error);
+            });
+        });
 
 
    
