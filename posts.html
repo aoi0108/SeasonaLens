@@ -51,7 +51,7 @@
 
        <div class="postContainer">
         <p id="postDay"></p>
-        <img id="postPic" src="" style="height:300px;">
+        <img id="postPic" src="" style="height:400px;">
         <p id="feel"></p>
         <p id="caption"></p>
 
@@ -84,7 +84,7 @@
         //投稿データの取得
         db.collection("PostData").doc(user.uid).collection("post").get().then((snapShot) => {
           snapShot.forEach(doc => {
-            postDatas[i] = doc.data();
+            postDatas[i] =  doc.data();
             i++;
           });
           console.log(postDatas);
@@ -123,6 +123,8 @@
     //受け取った数字をインデックスとして、対応する投稿を表示する関数
     function displayPost(i){
       //投稿の表示-写真とキャプション
+      let img = new Image();
+      img.onload = function() {
       document.getElementById("postPic").src = postDatas[i].Picture;
           document.getElementById("caption").innerHTML = postDatas[i].caption;
 
@@ -142,6 +144,8 @@
           }
           //投稿の表示-投稿日
           document.getElementById("postDay").innerHTML = postDatas[i].postDate;
+        };
+        img.src = postDatas[i].Picture;
     }
 
     let myUpdateChart; // グローバルスコープで変数を宣言
@@ -241,11 +245,5 @@
         // グラフ再作成
         await createChart();
       });
-    function test(){
-      let today = new Date();
-      console.log(today);
-      const postDate = today.getFullYear() + "/" + (today.getMonth()+1) + "/" + today.getDate() + "  " + today.getHours() + ":" + today.getMinutes();
-      console.log(postDate);
-    }
   </script>
 </html>

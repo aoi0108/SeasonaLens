@@ -81,7 +81,7 @@ body{
     left: 0;/* メニューを画面に入れる */
 }
 
-
+/*投稿データ*/
 .PostAndArrowContainer {
   display: flex;
   justify-content: center;
@@ -94,6 +94,7 @@ body{
   text-align: center;
   margin: 20px;
   color: #555555; /* 文字の色を指定 */
+  font-size: 20px;
 }
 
 #postDay{
@@ -101,13 +102,26 @@ body{
 }
 
 #feel{
-  font-size:30px;
+  font-size:50px;
   margin:5px;
   margin-top: 20px;
 }
 
 #caption{
   margin:5px;
+  margin-bottom: 20px;
+  width:600px;
+}
+
+/*矢印アイコンのホバー*/
+#rightArrow:hover{
+  transform: scale(1.1);
+  transition: 0.3s;
+}
+
+#leftArrow:hover{
+  transform: scale(1.1);
+  transition: 0.3s;
 }
 
 .update-button button{
