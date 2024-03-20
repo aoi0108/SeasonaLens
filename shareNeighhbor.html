@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="posts.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@vectopus/atlas-icons/style.css"
+    />
+    <link rel="shortcut icon" href="images/favicon_pine.png">
+    <title>Posts</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCmiBcZ3VCgEAtDMgyg0vDFhNyi7H2xcpk",
+        authDomain: "seasonal-lens.firebaseapp.com",
+        databaseURL: "https://seasonal-lens-default-rtdb.firebaseio.com",
+        projectId: "seasonal-lens",
+        storageBucket: "seasonal-lens.appspot.com",
+        messagingSenderId: "961849470376",
+        appId: "1:961849470376:web:cfa47d3a40d59a1116c19d",
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+  </head>
+  <body>
+    <!-- ハンバーガーメニュー部分 -->
+    <div class="nav">
+      <!-- ハンバーガーメニューの表示・非表示を切り替えるチェックボックス -->
+      <input id="drawer_input" class="drawer_hidden" type="checkbox" />
+
+      <!-- ハンバーガーアイコン -->
+      <label for="drawer_input" class="drawer_open"><span></span></label>
+
+      <!-- メニュー -->
+      <nav class="nav_content">
+        <ul class="nav_list">
+          <li class="nav_item"><a href="home.html">Home</a></li>
+          <li class="nav_item"><a href="share.html">Share</a></li>
+          <li class="nav_item"><a id="logout">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+    <!-- 本文 -->
+    <div class="PostAndArrowContainer">
+      <!--ひだり矢印（戻る）-->
+      <botton type="button" id="leftArrow"><img src="images/arrow-left-circle.svg"  alt="previous post" ></botton>
+
+       <div class="postContainer">
+        <p id="postDay"></p>
+        <img id="postPic" src="">
+
+       </div>     
+       <!--みぎ矢印（進む）--> 
+       <botton type="button" id="rightArrow"><img src="images/arrow-right-circle.svg"></botton>
+      </div>
+
+
+    </div>
+ 
+  <script>
+    //データベースの参照を用意
+    const db = firebase.firestore();
+    
+    let i = 0;
+
+    //ボタンを取得
+    const LButton = document.getElementById("leftArrow");
+    const RButton = document.getElementById("rightArrow");
+
+    firebase.auth().onAuthStateChanged(async user => {
+      if(user){
+
+        try{
+        console.log(user.uid);
+        //ユーザーの設定してる都道府県を取得
+        const forPref = await db.collection("users").doc(user.uid).get();
+        const userpref = forPref.data().prefecture;
+            console.log(userpref);
+
+            //同じ県に住んでる人を探す
+            const snapShot = await db.collection("users").where("prefecture", "==", userpref).get(); 
+            //where句の利用でif判定を省略
+            const neighborDatas  = snapShot.docs.map(doc => doc.id);
+            //mapによりforで一つずつid取り出さなくて良くなる
+        
+                for(user of neighborDatas){
+                    console.log(user);
+                }
+                //ここまでは動いた
+
+                //取得した隣人情報から写真を取得
+                //ユーザーの投稿データすべてを収容する配列
+                const postDatas = [];
+                for (const id of neighborDatas) {
+                    const postSnapshot = await db.collection("postData").doc(id).collection("post").get();
+                    postSnapshot.forEach(doc => {
+                        if (doc.exists) {
+                            postDatas.push(doc.data());
+                        } else {
+                            console.log("no post Data.")
+                        }
+                    });
+                }
+
+                console.log(postDatas[0]);
+                //テスト
+                /*
+                const post = postDatas[0];
+                    const img = new Image();
+                    img.onload = function() {
+                        document.getElementById("postPic").src = post.Picture;
+                        document.getElementById("postDay").innerHTML = post.postDate;
+                    };
+                    img.src = post.Picture;
+                    //
+                    */
+
+                //displayPost(0,postDatas);
+                //切り替え用変数
+                let k = 0;
+
+                LButton.addEventListener('click',(event)=>{
+                    if(k-1<0){
+                    j=postDatas.length-1;
+                    }else{
+                    k--;
+                    }
+                    console.log("display:"+k);
+                   displayPost(k,postDatas);
+                })
+
+                RButton.addEventListener('click',(event)=>{
+                    if(k+1 > postDatas.length-1){
+                    k=0;
+                    }else{
+                    k++;
+                    }
+                    //console.log("display:"+j);
+                    displayPost(k,postDatas);
+                })
+
+                //受け取った数字をインデックスとして、対応する投稿を表示する関数
+                function displayPost(index, postDatas) {
+                if (postDatas.length > 0 && index >= 0 && index <= postDatas.length) {
+                    const post = postDatas[index];
+                    const img = new Image();
+                    img.onload = function() {
+                        document.getElementById("postPic").src = post.Picture;
+                        document.getElementById("postDay").innerHTML = post.postDate;
+                    };
+                    img.src = post.Picture;
+                } else {
+                    console.log("No post data available.");
+                }
+            }
+
+                /*
+                function displayPost(i,postDatas){
+                //投稿の表示-写真とキャプション
+                let img = new Image();
+                img.onload = function() {
+                document.getElementById("postPic").src = postDatas[i].Picture;
+                    
+                    //投稿の表示-投稿日
+                    document.getElementById("postDay").innerHTML = postDatas[i].postDate;
+                    };
+                    img.src = postDatas[i].Picture;
+                }
+                */
+            }catch (error) {
+            console.log("Error:", error);
+        }
+                
+        
+        }else{
+          console.log("please login.",error)
+      }
+      
+    });
+
+  document.getElementById('logout').addEventListener('click', function(event) {
+            event.preventDefault();
+            firebase.auth().signOut().then(() => {
+                console.log('User signed out.');
+                alert("ログアウトしました");
+                window.location.href = 'home.html';
+            }).catch((error) => {
+                console.error('Sign Out Error', error);
+            });
+        });
+
+
+   
+  </script>
+  </body>
+</html>
+
